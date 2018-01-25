@@ -7,6 +7,7 @@ describe('App initialization', () => {
   })
 
   it('Displays an error on failure', () => {
+    cy.server()
     cy.route({
       url: '/api/todos',
       method: 'GET',

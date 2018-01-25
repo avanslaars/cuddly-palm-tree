@@ -1,9 +1,9 @@
 describe('Input form', () => {
   beforeEach(() => {
-    cy.seedAndVisit([])
+    cy.visit('http://localhost:3030')
   })
 
-  it.only('focuses input on load', () => {
+  it('focuses input on load', () => {
     cy.focused()
       .should('have.class', 'new-todo')
   })
@@ -16,7 +16,7 @@ describe('Input form', () => {
       .should('have.value', typedText)
   })
 
-  context('Form submission', () => {
+  context('Form Submission', () => {
     beforeEach(() => {
       cy.server()
     })
@@ -54,7 +54,7 @@ describe('Input form', () => {
         .should('not.exist')
 
       cy.get('.error')
-        .should('be.visible')
+        .should('be.visible')  
     })
   })
 })

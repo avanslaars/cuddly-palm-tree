@@ -24,6 +24,7 @@ describe('List items', () => {
       status: 200,
       response: {}
     })
+    .as('delete')
 
     cy.get('.todo-list li')
       .as('list')
@@ -34,13 +35,15 @@ describe('List items', () => {
       .invoke('show')
       .click()
 
+    cy.wait('@delete')
+
     cy.get('@list')
       .should('have.length', 3)
       .and('not.contain', 'Milk')
   })
 
   it('Marks an incomplete item complete', () => {
-    cy.fixture('todos')
+    cy.fixture('mixed_todos')
       .then(todos => {
         const target = Cypress._.head(todos)
         cy.route(
