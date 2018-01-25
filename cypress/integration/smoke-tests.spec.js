@@ -1,8 +1,7 @@
 describe('Smoke tests', () => {
   beforeEach(() => {
-    cy.request('GET', '/api/todos')
-      .its('body')
-      .each(todo => cy.request('DELETE', `/api/todos/${todo.id}`))
+    cy.request('DELETE', '/api/todos/all')
+    cy.server()
   })
 
   context('With no todos', () => {
@@ -12,8 +11,9 @@ describe('Smoke tests', () => {
         {text: 'Buy eggs', expectedLength: 2},
         {text: 'Buy bread', expectedLength: 3}
       ]
+
       cy.visit('/')
-      cy.server()
+
       cy.route('POST', '/api/todos')
         .as('create')
 
@@ -33,12 +33,15 @@ describe('Smoke tests', () => {
 
   context('With active todos', () => {
     beforeEach(() => {
-      cy.fixture('todos')
-        .each(todo => {
-          const newTodo = Cypress._.merge(todo, {isComplete: false})
-          cy.request('POST', '/api/todos', newTodo)
-        })
+      cy.fixture('incomplete_todos')
+        .then(todos => cy.request('POST', '/api/todos/bulkload', { todos }))
+
+      cy.route('GET', '/api/todos')
+        .as('initialLoad')
+
       cy.visit('/')
+
+      cy.wait('@initialLoad')
     })
 
     it('Loads existing data from the DB', () => {
@@ -47,7 +50,6 @@ describe('Smoke tests', () => {
     })
 
     it('Deletes todos', () => {
-      cy.server()
       cy.route('DELETE', '/api/todos/*')
         .as('delete')
 
@@ -72,7 +74,7 @@ describe('Smoke tests', () => {
 
       cy.wait('@update')
     }
-    cy.server()
+
     cy.route('PUT', '/api/todos/*')
       .as('update')
 
