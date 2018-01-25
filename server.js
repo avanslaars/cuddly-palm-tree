@@ -25,6 +25,6 @@ server.use(jsonServer.rewriter({
 
 // Use default router
 server.use(router)
-server.listen(3030, () => {
-  console.log('JSON Server is running')
+const listener = server.listen(3030, () => {
+  console.log(`JSON Server is running at port ${listener.address().port}`)
 })
